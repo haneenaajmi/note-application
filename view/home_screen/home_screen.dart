@@ -1,5 +1,4 @@
-import 'dart:math';
-
+// import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:note_app/model/notes_model.dart';
 import 'package:note_app/utils/color_constants/color_constants.dart';
@@ -12,12 +11,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+int? selectedIndex;
+
 class _HomeScreenState extends State<HomeScreen> {
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final dateController = TextEditingController();
 
   List<NotesModel> myNotesList = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,16 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView.separated(
           itemCount: myNotesList.length,
           itemBuilder: (context, index) => ListScreenWidget(
-              onDeleteTap: () {
-                //  myNotesList.removeAt(index);
-                myNotesList[index] = NotesModel(
-                  title: "title",
-                  description: "description",
-                );
-                setState(() {});
-              },
-              title: myNotesList[index].title,
-              discription: myNotesList[index].description),
+            title: myNotesList[index].title,
+            discription: myNotesList[index].description,
+            date: myNotesList[index].date,
+            color: myNotesList[index].color,
+            onDeleteTap: () {
+              // myNotesList.removeAt(index);
+              myNotesList[index] = NotesModel(
+                title: "title",
+                description: "description",
+              );
+              setState(() {});
+            },
+          ),
           separatorBuilder: (context, index) => SizedBox(
             height: 10,
           ),
@@ -58,15 +63,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<dynamic> bottonSheetRefactor(BuildContext context) {
     return showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(10),
-          ),
+      isScrollControlled: true,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
         ),
-        builder: (BuildContext context) {
-          return Builder(builder: (context) {
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, inSetState) {
             return Container(
               color: ColorConstant.background,
               child: Padding(
@@ -85,9 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 30,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -114,71 +117,39 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstant.container1),
+                    SizedBox(height: 16.0),
+                    Container(
+                        height: 50,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: ColorConstant.mycolorList.length,
+                          itemBuilder: (context, index) => Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            child: InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 4,
+                                    color: selectedIndex == index
+                                        ? ColorConstant.mycolorListDart[index]
+                                        : Colors.transparent,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: ColorConstant.mycolorList[index],
+                                ),
+                                height: 50,
+                                width: 50,
+                              ),
+                              onTap: () {
+                                inSetState(() {
+                                  selectedIndex = index;
+                                });
+                                print(selectedIndex);
+                              },
+                            ),
                           ),
-                        ),
-                        InkWell(
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstant.container2),
-                          ),
-                        ),
-                        InkWell(
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstant.container3),
-                          ),
-                        ),
-                        InkWell(
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstant.container4),
-                          ),
-                        ),
-                        InkWell(
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstant.container5),
-                          ),
-                        ),
-                        InkWell(
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstant.container6),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
+                        )),
+                    SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -193,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Text("Cancel")),
                         SizedBox(
-                          width: 20,
+                          width: 30,
                         ),
                         ElevatedButton(
                           style: ButtonStyle(
@@ -202,7 +173,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             myNotesList.add(NotesModel(
                                 title: nameController.text,
-                                description: descriptionController.text));
+                                description: descriptionController.text,
+                                date: dateController.text,
+                                color: selectedIndex ?? 0));
+                            print(myNotesList.length);
                             setState(() {});
                             nameController.clear();
                             descriptionController.clear();
@@ -216,7 +190,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             );
-          });
-        });
+          },
+        );
+      },
+    );
   }
 }

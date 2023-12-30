@@ -8,9 +8,13 @@ class ListScreenWidget extends StatefulWidget {
       {super.key,
       required this.title,
       required this.discription,
+      required this.date,
+      required this.color,
       required Null Function() onDeleteTap});
   String title;
   String discription;
+  String? date;
+  int? color;
 
   @override
   State<ListScreenWidget> createState() => _ListScreenWidgetState();
@@ -27,7 +31,7 @@ class _ListScreenWidgetState extends State<ListScreenWidget> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.amber,
+        //  color: ColorConstant.mycolorList[index],
       ),
       padding: EdgeInsets.all(20),
       child: Column(
