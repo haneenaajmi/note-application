@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class ColorConstant {
   static Color appbar = Color(0xfff0878c);
-  static Color background = Color(0xffcecece);
-  static Color text = Color(0xff111111);
+  static Color background = Color(0xff000000);
+  static Color text = Color(0xffffffff);
 
   // static Color container1 = Color(0xff07157a);
   // static Color container2 = Color(0xffb6acad);
